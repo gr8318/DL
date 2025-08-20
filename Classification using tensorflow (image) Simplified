@@ -1,0 +1,26 @@
+#Classification using tensorflow (image) Simplified
+
+import tensorflow as tf, numpy as np
+from tensorflow.keras import datasets, layers, models
+
+# Load + preprocess
+(x_train,y_train),(x_test,y_test)=datasets.cifar10.load_data()
+
+x_train,x_test=x_train.reshape(len(x_train),-1)/255.0,
+x_test.reshape(len(x_test),-1)/255.0
+classes=['Airplane','Car','Bird','Cat','Deer','Dog','Frog','Horse','Ship','Truck']
+
+# Model
+model=models.Sequential([
+    layers.Dense(512,activation='relu',input_shape=(3072,)),
+    layers.Dense(256,activation='relu'),layers.Dense(10)
+])
+model.compile(optimizer='adam',
+    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+    metrics=['accuracy'])
+
+# Train + evaluate + predict
+model.fit(x_train,y_train,epochs=10,batch_size=64,validation_data=(x_test,y_test))
+print("Test acc:",model.evaluate(x_test,y_test,verbose=0)[1])
+pred=tf.keras.Sequential([model,tf.keras.layers.Softmax()]).predict(x_test)
+print("Pred:",classes[np.argmax(pred[0])],"| True:",classes[y_test[0][0]])
