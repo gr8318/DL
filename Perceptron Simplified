@@ -1,0 +1,17 @@
+#Perceptron Simplified
+
+import numpy as np
+class Perceptron:
+    def __init__(self, lr=0.1, n_iters=10): self.lr, self.n_iters = lr, n_iters
+    def fit(self, X, y):
+        self.w, self.b = np.zeros(X.shape[1]), 0
+        for _ in range(self.n_iters):
+            for xi, t in zip(X, y):
+                upd = self.lr * (t - self.act(np.dot(xi, self.w)+self.b))
+                self.w, self.b = self.w + upd*xi, self.b + upd
+    def act(self, x): return 1 if x >= 0 else 0
+    def predict(self, X): return np.array([self.act(np.dot(xi, self.w)+self.b) for xi in X])
+
+X = np.array([[0,0],[0,1],[1,0],[1,1]]); y = np.array([0,0,0,1])
+p = Perceptron(0.1,10); p.fit(X,y)
+print("Predictions:", p.predict(X))
