@@ -1,0 +1,21 @@
+#RBF Simplified
+
+import numpy as np, matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+time = np.array([6,9,12,15,18,21]).reshape(-1,1)
+temp = np.array([15,20,30,32,25,18])
+
+rbf = lambda x,c,g=0.1: np.exp(-g*(x-c)**2)
+X = np.array([rbf(time,c).flatten() for c in time.flatten()]).T
+model = LinearRegression().fit(X, temp)
+
+t_test = np.linspace(0,24,100).reshape(-1,1)
+X_test = np.array([rbf(t_test,c).flatten() for c in time.flatten()]).T
+pred = model.predict(X_test)
+
+plt.scatter(time,temp,c='r',label='Training Data')
+plt.plot(t_test,pred,'b',label='RBF Regression Prediction')
+plt.title('Predicting Temperature Over Time Using RBF')
+plt.xlabel('Time of Day (Hours)'); plt.ylabel('Temperature (°C)')
+plt.legend(); plt.grid(); plt.show()
